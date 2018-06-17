@@ -14,14 +14,12 @@
 
 #Code:
 
-- MainLoopFrame ( From Scene to Scene and UI)
+- MainLoopFrame (From Scene to Scene) [Michi]
 
-- Input Fixed (for now)
+- Ui [Michi]
 
-- I-Interactable (Code) (Per Object)
+- PlayerInput and Iinteractable [Flo]
 
-- Ppl auch I-Interactable (10)
+- LevelCollision (Cubic-Raycast's) [Flo]
 
-- LevelCollision (semi Code, semi LevelDesign (remove collision on bridge))
-
-- ALL STATS are in scr_Stats script per Object. Templating throu Pefabs.
+- ALL STATS are in scr_Stats script per Object. Templating throu Pefabs. [Flo]
