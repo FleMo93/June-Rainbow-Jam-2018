@@ -121,7 +121,7 @@ public class scr_Player_Motor : MonoBehaviour
 
             case Directions.Left:
                 target = new Vector3(
-                    RoundToDecimal5(target.x -+ 1),
+                    RoundToDecimal5(target.x - 1),
                     target.y,
                     target.z
                     );
@@ -158,8 +158,6 @@ public class scr_Player_Motor : MonoBehaviour
     {
         return GetTargetObjects(targetTile).Length == 0;
     }
-
-    Vector3 lookat;
 
     private void Rotate()
     {
