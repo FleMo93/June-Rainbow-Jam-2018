@@ -3,39 +3,41 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class scr_soundOnHoverEnter : MonoBehaviour, IPointerEnterHandler
+public class scr_soundButtonGeneral : MonoBehaviour, IPointerEnterHandler, IPointerClickHandler
 {
 
-    public AudioClip Sound;
+    public AudioClip ac_hoverEnter;
+    public AudioClip ac_click;
 
     AudioSource audioSource;
 
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        if (audioSource != null && ac_click != null)
+        {
+            audioSource.clip = ac_click;
+            audioSource.Play();
+        }
+    }
+
     public void OnPointerEnter(PointerEventData eventData)
     {
-        if (audioSource != null && Sound != null)
+        if (audioSource != null && ac_hoverEnter != null)
         {
-            audioSource.clip = Sound;
+            audioSource.clip = ac_hoverEnter;
             audioSource.Play();
         }
     }
 
     private void OnEnable()
     {
-        if (Sound == null)
-        {
-            return;
-        }
         if (audioSource == null)
         {
             GameObject camTarget = GameObject.Find("CamTarget");
             if (camTarget != null)
             {
                 audioSource = camTarget.GetComponent<AudioSource>();
-                if (audioSource != null)
-                {
-                    //audioSource.clip = Sound;
-                }
-                else
+                if (audioSource == null)
                 {
                     Debug.LogWarning("Cant find AudioSource on CamTarget");
                 }
