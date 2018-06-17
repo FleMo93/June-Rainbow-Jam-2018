@@ -11,152 +11,114 @@ public class scr_Player_Motor : MonoBehaviour
     [SerializeField]
     private GameObject _Model;
 
-    private enum Directions { Up, Right, Down, Left, None }
-    private Directions actualMoveDirection = Directions.None;
-    private Directions pressedMoveDirection = Directions.None;
-    private Directions lookAtDirection = Directions.None;
+    private scr_Stats.Directions actualMoveDirection = scr_Stats.Directions.None;
+    private scr_Stats.Directions pressedMoveDirection = scr_Stats.Directions.None;
+    private scr_Stats.Directions lookAtDirection = scr_Stats.Directions.None;
 
     private i_Player_Input input;
     private scr_Stats stats;
-    
 
-	void Start ()
+    private Vector3 halfExtents;
+    private i_Draggable draggable = null;
+    private GameObject draggableGameObject = null;
+    private scr_Stats.Directions relativePlayerDirectionToBox = scr_Stats.Directions.None;
+
+    void Start ()
     {
         input = GetComponent<i_Player_Input>();
         stats = GetComponent<scr_Stats>();
-	}
+        halfExtents = new Vector3(
+            _PlayerWidth / 2,
+            _PlayerHeight / 2,
+            _PlayerWidth / 2
+            );
+    }
 	
 	void Update ()
     {
         if (input.IsMovingUp())
         {
-            pressedMoveDirection = Directions.Up;
+            pressedMoveDirection = scr_Stats.Directions.Up;
         }
         else if (input.IsMovingRight())
         {
-            pressedMoveDirection = Directions.Right;
+            pressedMoveDirection = scr_Stats.Directions.Right;
         }
         else if(input.IsMovingDown())
         {
-            pressedMoveDirection = Directions.Down;
+            pressedMoveDirection = scr_Stats.Directions.Down;
         }
         else  if(input.IsMovingLeft())
         {
-            pressedMoveDirection = Directions.Left;
+            pressedMoveDirection = scr_Stats.Directions.Left;
         }
         else
         {
-            pressedMoveDirection = Directions.None;
+            pressedMoveDirection = scr_Stats.Directions.None;
         }
 
 
         Move();
         Rotate();
 
-        if(pressedMoveDirection == Directions.None &&
-            actualMoveDirection == Directions.None &&
+        if(pressedMoveDirection == scr_Stats.Directions.None &&
+            actualMoveDirection == scr_Stats.Directions.None &&
             input.IsInteracting())
         {
-            foreach(i_Interactable interactable in GetInteractable())
-            {
-                interactable.Interact();
-            }
+            Interact();   
         }
     }
 
-    Vector3 target;
+    Vector3 targetMoveTo;
     private void Move()
     {
-        if (actualMoveDirection == Directions.None && pressedMoveDirection != Directions.None)
+        if (actualMoveDirection == scr_Stats.Directions.None && pressedMoveDirection != scr_Stats.Directions.None)
         {
-            target = GetTarget(pressedMoveDirection);
-            lookAtDirection = pressedMoveDirection;
+            targetMoveTo = scr_Tilemap.Get.GetNextTile(pressedMoveDirection, this.transform.position);
 
-            if(IsTargetFree(target))
+            if (draggable == null)
+            {
+                lookAtDirection = pressedMoveDirection;
+            }
+
+            if(draggable == null && scr_Tilemap.Get.IsTileFree(targetMoveTo, halfExtents))
             {
                 actualMoveDirection = pressedMoveDirection;
+                
+            }
+            else if(draggable != null && IsDragDirectionFree())
+            {
+                actualMoveDirection = pressedMoveDirection;
+                //draggable.Move(pressedMoveDirection, stats.MoveSpeed);
             }
         }
 
-        if (actualMoveDirection != Directions.None)
+        if (actualMoveDirection != scr_Stats.Directions.None)
         {
-            this.transform.position = Vector3.MoveTowards(this.transform.position, target, stats.MoveSpeed * Time.deltaTime);
+            this.transform.position = Vector3.MoveTowards(this.transform.position, targetMoveTo, stats.MoveSpeed * Time.deltaTime);
         }
 
-        if(target == this.transform.position)
+        if(targetMoveTo == this.transform.position)
         {
-            actualMoveDirection = Directions.None;
+            actualMoveDirection = scr_Stats.Directions.None;
         }
     }
 
-    private Vector3 GetTarget(Directions direction)
+    private bool IsDragDirectionFree()
     {
-        Vector3 target = this.transform.position;
+        Collider[] colliders = scr_Tilemap.Get.GetCollidersOnTile(targetMoveTo, halfExtents);
+        bool playerCanMove = true;
 
-        switch(direction)
+        foreach(Collider collider in colliders)
         {
-            case Directions.Up:
-                target = new Vector3(
-                    target.x,
-                    target.y,
-                    RoundToDecimal5(target.z + 1)
-                    );
+            if(collider.gameObject != draggableGameObject)
+            {
+                playerCanMove = false;
                 break;
-
-            case Directions.Right:
-                target = new Vector3(
-                    RoundToDecimal5(target.x + 1),
-                    target.y,
-                    target.z
-                    );
-                break;
-
-            case Directions.Down:
-                target = new Vector3(
-                    target.x,
-                    target.y,
-                    RoundToDecimal5(target.z - 1)
-                    );
-                break;
-
-            case Directions.Left:
-                target = new Vector3(
-                    RoundToDecimal5(target.x - 1),
-                    target.y,
-                    target.z
-                    );
-                break;
+            }
         }
 
-        return target;
-    }
-
-    private float RoundToDecimal5(float val)
-    {
-        val = val * 10;
-        val = Mathf.Round(val / 5.0f) * 5;
-        return val / 10;
-    }
-
-    private Collider[] GetTargetObjects(Vector3 targetTile)
-    {
-        Vector3 center = new Vector3(
-            targetTile.x,
-            targetTile.y + _PlayerHeight / 2,
-            targetTile.z
-            );
-        Vector3 halfExtents = new Vector3(
-            _PlayerWidth / 2 - 0.001f,
-            _PlayerHeight / 2 - 0.001f,
-            _PlayerWidth / 2 - 0.001f
-            );
-
-        return Physics.OverlapBox(center, halfExtents);
-    }
-
-    private bool IsTargetFree(Vector3 targetTile)
-    {
-        return GetTargetObjects(targetTile).Length == 0;
+        return draggable.MovementPossible(pressedMoveDirection, relativePlayerDirectionToBox) && playerCanMove;
     }
 
     private void Rotate()
@@ -165,19 +127,19 @@ public class scr_Player_Motor : MonoBehaviour
 
         switch(lookAtDirection)
         {
-            case Directions.Up:
+            case scr_Stats.Directions.Up:
                 dir = Vector3.forward;
                 break;
 
-            case Directions.Right:
+            case scr_Stats.Directions.Right:
                 dir = Vector3.right;
                 break;
 
-            case Directions.Down:
+            case scr_Stats.Directions.Down:
                 dir = Vector3.back;
                 break;
 
-            case Directions.Left:
+            case scr_Stats.Directions.Left:
                 dir = Vector3.left;
                 break;
             default:
@@ -190,22 +152,61 @@ public class scr_Player_Motor : MonoBehaviour
             stats.RotationSpeed * Time.deltaTime);
     }
 
-    private i_Interactable[] GetInteractable()
+    private KeyValuePair<GameObject, i_Interactable>[] GetInteractable()
     {
-        Vector3 target = GetTarget(lookAtDirection);
-        Collider[] colliders = GetTargetObjects(target);
+        Vector3 target = scr_Tilemap.Get.GetNextTile(lookAtDirection, this.transform.position);
+        Collider[] colliders = scr_Tilemap.Get.GetCollidersOnTile(target, halfExtents);
 
-        List<i_Interactable> list = new List<i_Interactable>();
+        List<KeyValuePair<GameObject, i_Interactable>> list = new List<KeyValuePair<GameObject, i_Interactable>>();
 
         foreach(Collider collider in colliders)
         {
             i_Interactable interactable = collider.gameObject.GetComponent<i_Interactable>();
             if(interactable != null)
             {
-                list.Add(interactable);
+                list.Add(new KeyValuePair<GameObject, i_Interactable>(collider.gameObject, interactable));
             }
         }
 
         return list.ToArray();
+    }
+
+    private void Interact()
+    {
+        foreach (KeyValuePair<GameObject, i_Interactable> interactable in GetInteractable())
+        {
+            scr_Stats.Interaction interaction = interactable.Value.Interact();
+
+            switch(interaction)
+            {
+                case scr_Stats.Interaction.DraggableBox:
+                    i_Draggable drag = interactable.Key.GetComponent<i_Draggable>();
+
+                    if(drag != null)
+                    {
+                        Drag(drag, interactable.Key);
+                    }
+
+                    break;
+            }
+        }
+    }
+
+    private void Drag(i_Draggable drag, GameObject draggableGameObject)
+    {
+        if(draggable == drag)
+        {
+            draggableGameObject.transform.parent = null;
+            draggable = null;
+            draggableGameObject = null;
+            relativePlayerDirectionToBox = scr_Stats.Directions.None;
+        }
+        else
+        {
+            draggable = drag;
+            this.draggableGameObject = draggableGameObject;
+            relativePlayerDirectionToBox = lookAtDirection;
+            draggableGameObject.transform.SetParent(this.transform);
+        }
     }
 }
