@@ -23,3 +23,5 @@
 - Ppl auch I-Interactable (10)
 
 - LevelCollision (semi Code, semi LevelDesign (remove collision on bridge))
+
+- ALL STATS are in scr_Stats script per Object. Templating throu Pefabs.
