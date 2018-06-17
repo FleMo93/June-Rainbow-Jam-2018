@@ -1,5 +1,7 @@
 # June-Rainbow-Jam-2018
 
+https://itch.io/jam/june-rainbow-jam-2018
+
 ##Aufgaben:
 
 #2.5D -> Modelle (keine Texturen, only Poligon):
