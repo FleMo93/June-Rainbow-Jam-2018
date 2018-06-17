@@ -7,7 +7,7 @@ public class scr_btnStart : MonoBehaviour {
 
     public void click()
     {
-        //SceneManager.LoadScene("scn_Level_1");
-        SceneManager.LoadScene("Dev");
+        SceneManager.LoadScene("scn_Level_1");
+        //SceneManager.LoadScene("Dev");
     }
 }
