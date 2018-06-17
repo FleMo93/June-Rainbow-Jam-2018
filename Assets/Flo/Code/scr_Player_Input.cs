@@ -21,7 +21,6 @@ public class scr_Player_Input : MonoBehaviour, i_Player_Input
         return moveRight;
     }
      
-
     public bool IsMovingDown()
     {
         return moveDown;
