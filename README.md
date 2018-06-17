@@ -24,3 +24,4 @@
 
 - LevelCollision (semi Code, semi LevelDesign (remove collision on bridge))
 
+- ScriptableObjects for Stats
