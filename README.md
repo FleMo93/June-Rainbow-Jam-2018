@@ -23,5 +23,3 @@
 - Ppl auch I-Interactable (10)
 
 - LevelCollision (semi Code, semi LevelDesign (remove collision on bridge))
-
-- ScriptableObjects for Stats
