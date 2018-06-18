@@ -1,8 +1,9 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class scr_Player_Motor : MonoBehaviour
+public class scr_Human_Motor : MonoBehaviour, i_Human_Motor
 {
     [SerializeField]
     private float _PlayerHeight = 2;
@@ -15,7 +16,6 @@ public class scr_Player_Motor : MonoBehaviour
     private scr_Stats.Directions pressedMoveDirection = scr_Stats.Directions.None;
     private scr_Stats.Directions lookAtDirection = scr_Stats.Directions.None;
 
-    private i_Player_Input input;
     private scr_Stats stats;
 
     private Vector3 halfExtents;
@@ -25,7 +25,6 @@ public class scr_Player_Motor : MonoBehaviour
 
     void Start ()
     {
-        input = GetComponent<i_Player_Input>();
         stats = GetComponent<scr_Stats>();
         halfExtents = new Vector3(
             _PlayerWidth / 2,
@@ -33,40 +32,41 @@ public class scr_Player_Motor : MonoBehaviour
             _PlayerWidth / 2
             );
     }
-	
-	void Update ()
+
+    public void MoveUp()
     {
-        if (input.IsMovingUp())
-        {
-            pressedMoveDirection = scr_Stats.Directions.Up;
-        }
-        else if (input.IsMovingRight())
-        {
-            pressedMoveDirection = scr_Stats.Directions.Right;
-        }
-        else if(input.IsMovingDown())
-        {
-            pressedMoveDirection = scr_Stats.Directions.Down;
-        }
-        else  if(input.IsMovingLeft())
-        {
-            pressedMoveDirection = scr_Stats.Directions.Left;
-        }
-        else
-        {
-            pressedMoveDirection = scr_Stats.Directions.None;
-        }
+        pressedMoveDirection = scr_Stats.Directions.Up;
+    }
 
+    public void MoveRight()
+    {
+        pressedMoveDirection = scr_Stats.Directions.Right;
+    }
 
+    public void MoveDown()
+    {
+        pressedMoveDirection = scr_Stats.Directions.Down;
+    }
+
+    public void MoveLeft()
+    {
+        pressedMoveDirection = scr_Stats.Directions.Left;
+    }
+
+    void i_Human_Motor.Interact()
+    {
+        if (pressedMoveDirection == scr_Stats.Directions.None &&
+            actualMoveDirection == scr_Stats.Directions.None)
+        {
+            Interact();
+        }
+    }
+
+    void Update ()
+    {
         Move();
+        pressedMoveDirection = scr_Stats.Directions.None;
         Rotate();
-
-        if(pressedMoveDirection == scr_Stats.Directions.None &&
-            actualMoveDirection == scr_Stats.Directions.None &&
-            input.IsInteracting())
-        {
-            Interact();   
-        }
     }
 
     Vector3 targetMoveTo;

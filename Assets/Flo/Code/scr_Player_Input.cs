@@ -39,31 +39,16 @@ public class scr_Player_Input : MonoBehaviour, i_Player_Input
 	
 	void Update ()
     {
-        interacting = false;
-        moveRight = false;
-        moveLeft = false;
-        moveUp = false;
-        moveDown = false;
+        //interacting = false;
+        //moveRight = false;
+        //moveLeft = false;
+        //moveUp = false;
+        //moveDown = false;
 
-        if(Input.GetAxisRaw("Horizontal") >= 0.5f)
-        {
-            moveRight = true;
-        }
-        else if(Input.GetAxisRaw("Horizontal") <= -0.5f)
-        {
-            moveLeft = true;
-        }
-        else if(Input.GetAxisRaw("Vertical") >= 0.5f)
-        {
-            moveUp = true;
-        }
-        else if(Input.GetAxisRaw("Vertical") <= -0.5f)
-        {
-            moveDown = true;
-        }
-        else if(Input.GetButtonDown("Fire1"))
-        {
-            interacting = true;
-        }
+        moveRight = Input.GetAxisRaw("Horizontal") >= 0.5f;
+        moveLeft = Input.GetAxisRaw("Horizontal") <= -0.5f;
+        moveUp = Input.GetAxisRaw("Vertical") >= 0.5f;
+        moveDown = Input.GetAxisRaw("Vertical") <= -0.5f;
+        interacting = Input.GetButtonDown("Fire1");
     }
 }

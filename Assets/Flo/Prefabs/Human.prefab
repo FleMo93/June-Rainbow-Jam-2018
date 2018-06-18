@@ -54,6 +54,8 @@ GameObject:
   - component: {fileID: 114975144711154016}
   - component: {fileID: 114154357446121924}
   - component: {fileID: 65894349011696496}
+  - component: {fileID: 114704825994268528}
+  - component: {fileID: 114987459276676980}
   m_Layer: 0
   m_Name: Human
   m_TagString: Untagged
@@ -246,6 +248,20 @@ MonoBehaviour:
   MoveSpeed: 5
   Name: Lisa
   RotationSpeed: 10
+--- !u!114 &114704825994268528
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1557326921390034}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7179ec414b355f6418c7b265b4fde997, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _PlayerHeight: 2
+  _PlayerWidth: 1
+  _Model: {fileID: 0}
 --- !u!114 &114975144711154016
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -260,3 +276,14 @@ MonoBehaviour:
   _Model: {fileID: 1074994492507428}
   _MinRandomRotationTime: 1
   _MaxRandomRotationTime: 10
+--- !u!114 &114987459276676980
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1557326921390034}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30ebe5707deb63b4f94ec22a2e020138, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
