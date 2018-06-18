@@ -175,7 +175,7 @@ public class scr_Player_Motor : MonoBehaviour
     {
         foreach (KeyValuePair<GameObject, i_Interactable> interactable in GetInteractable())
         {
-            scr_Stats.Interaction interaction = interactable.Value.Interact();
+            scr_Stats.Interaction interaction = interactable.Value.Interact(this.gameObject);
 
             switch(interaction)
             {

@@ -88,4 +88,48 @@ public class scr_Tilemap : MonoBehaviour {
         val = Mathf.Round(val / 5.0f) * 5;
         return val / 10;
     }
+
+    public scr_Stats.Directions GetDirectionFromTo(Vector3 from, Vector3 to)
+    {
+        Vector3 dir = (from - to).normalized;
+        if(dir.x == 0 && dir.z == 0)
+        {
+            return scr_Stats.Directions.None;
+        }
+        else if(dir.z > 0 && Mathf.Abs(dir.z) > Mathf.Abs(dir.x))
+        {
+            return scr_Stats.Directions.Up;
+        }
+        else if(dir.z < 0 && Mathf.Abs(dir.z) > Mathf.Abs(dir.x))
+        {
+            return scr_Stats.Directions.Down;
+        }
+        else if(dir.x > 0 && Mathf.Abs(dir.x) > Mathf.Abs(dir.z))
+        {
+            return scr_Stats.Directions.Right;
+        }
+        else if(dir.x < 0 && Mathf.Abs(dir.x) > Mathf.Abs(dir.z))
+        {
+            return scr_Stats.Directions.Left;
+        }
+
+        return scr_Stats.Directions.None;
+    }
+
+    public Vector3 DirectionToVector(scr_Stats.Directions direction)
+    {
+        switch(direction)
+        {
+            case scr_Stats.Directions.Up:
+                return Vector3.forward;
+            case scr_Stats.Directions.Right:
+                return Vector3.right;
+            case scr_Stats.Directions.Down:
+                return Vector3.back;
+            case scr_Stats.Directions.Left:
+                return Vector3.left;
+            default:
+                return Vector3.zero;
+        }
+    }
 }

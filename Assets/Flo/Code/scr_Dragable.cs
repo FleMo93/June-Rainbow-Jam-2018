@@ -9,11 +9,10 @@ public class scr_Dragable : MonoBehaviour, i_Interactable, i_Draggable {
     [SerializeField]
     private Vector3 _BoxSize = new Vector3(1, 1, 1);
 
-    private scr_Stats.Directions actualMoveDirection = scr_Stats.Directions.None;
     private Vector3 targetMoveTo;
     private float moveSpeed;
 
-    public scr_Stats.Interaction Interact()
+    public scr_Stats.Interaction Interact(GameObject trigger)
     {
         return scr_Stats.Interaction.DraggableBox;
     }

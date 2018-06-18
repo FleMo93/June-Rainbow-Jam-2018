@@ -3,5 +3,5 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public interface i_Interactable {
-    scr_Stats.Interaction Interact();
+    scr_Stats.Interaction Interact(GameObject trigger);
 }

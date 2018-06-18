@@ -9,7 +9,7 @@ public class flo_scr_Switch : MonoBehaviour, i_Interactable {
     [SerializeField]
     private GameObject changeColorOn;
 
-    public scr_Stats.Interaction Interact()
+    public scr_Stats.Interaction Interact(GameObject trigger)
     {
         on = !on;
 

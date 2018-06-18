@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class scr_Stats : MonoBehaviour {
-    public enum Interaction { None, ChangeSwitch, ChopTree, DraggableBox }
+    public enum Interaction { None, ChangeSwitch, ChopTree, DraggableBox, TalkToHuman }
     [HideInInspector]
     public enum Directions { Up, Right, Down, Left, None }
 
@@ -11,5 +11,6 @@ public class scr_Stats : MonoBehaviour {
     public int ChopTreeStrength = 0;
     public int Health = 0;
     public float MoveSpeed = 0;
+    public string Name = "";
     public float RotationSpeed = 0;
 }

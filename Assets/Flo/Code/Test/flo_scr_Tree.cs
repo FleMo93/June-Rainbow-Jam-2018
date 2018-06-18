@@ -24,7 +24,7 @@ public class flo_scr_Tree : MonoBehaviour, i_Damageable, i_Interactable {
         }
     }
 
-    public scr_Stats.Interaction Interact()
+    public scr_Stats.Interaction Interact(GameObject trigger)
     {
         return scr_Stats.Interaction.ChopTree;
     }
