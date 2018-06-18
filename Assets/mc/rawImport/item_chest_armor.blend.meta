@@ -1,11 +1,11 @@
 fileFormatVersion: 2
-guid: 881281bf151f13a42828c637d532a5dd
+guid: 98e5c71c39065c2479bd0615f4a0085c
 ModelImporter:
   serializedVersion: 22
   fileIDToRecycleName:
     100000: //RootNode
     400000: //RootNode
-    2100000: unnamed
+    2100000: mat_leather
     2300000: //RootNode
     3300000: //RootNode
     4300000: Cube
