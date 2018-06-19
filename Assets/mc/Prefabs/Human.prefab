@@ -365,6 +365,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 60b067c13485c03449e0a8286759d016, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  TalkBubble: {fileID: 4032359295103800, guid: 0f2f805205c52684496584a924ba9985, type: 2}
   reference: {fileID: 0}
   TextResponse: '...'
   textComponents_struct_adj: []

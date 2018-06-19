@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class scr_HumanTalk : MonoBehaviour, i_Interactable
 {
+    public Transform TalkBubble;
+
 
     public scr_Stats reference;
 
@@ -15,6 +17,9 @@ public class scr_HumanTalk : MonoBehaviour, i_Interactable
     public List<string> textComponents_adj;
     public List<string> textComponents_rel;
     public List<string> textComponents_obj;
+
+    float locInteractCD = 2;
+    float locInteractCDCounter = 0;
 
     int scriptDelay = 10;
 
@@ -44,7 +49,6 @@ public class scr_HumanTalk : MonoBehaviour, i_Interactable
 
         textComponents_rel.Add("like");
         textComponents_rel.Add("dislike");
-        textComponents_rel.Add("connect to");
         textComponents_rel.Add("admire");
         textComponents_rel.Add("hate");
 
@@ -54,15 +58,17 @@ public class scr_HumanTalk : MonoBehaviour, i_Interactable
         textComponents_struct_rel.Add("i {0} {1}");
         textComponents_struct_rel.Add("i dont {0} {1}");
 
-        textComponents_obj.Add("maybe there is somthing here that can help us");
+        textComponents_obj.Add("maybe there is somthing\nhere that can help us");
         textComponents_obj.Add("there are too many trees here");
-        textComponents_obj.Add("I would give everything to reach my goals");
-        textComponents_obj.Add("the story about the Altar is nothing but a myth");
-        textComponents_obj.Add("an Axe is indeed a usefull tool,... sometimes");
+        textComponents_obj.Add("I would give everything\nto reach my goals");
+        textComponents_obj.Add("the story about the Altar\nis nothing but a myth");
+        textComponents_obj.Add("an Axe is indeed a usefull\ntool,... sometimes");
     }
 
     private void Update()
     {
+        locInteractCDCounter += Time.deltaTime;
+
         if (scriptDelay <= 0)
         {
             return;
@@ -101,11 +107,44 @@ public class scr_HumanTalk : MonoBehaviour, i_Interactable
                 TextResponse = textComponents_obj[UnityEngine.Random.Range(0, textComponents_obj.Count)];
             }
         }
+        else
+        {
+            TextResponse = textComponents_obj[UnityEngine.Random.Range(0, textComponents_obj.Count)];
+        }
     }
 
     public scr_Stats.Interaction Interact(GameObject trigger)
     {
-        Debug.Log(TextResponse);
-        return scr_Stats.Interaction.TalkToHuman;
+        if (locInteractCDCounter >= locInteractCD)
+        {
+            locInteractCDCounter = 0;
+            Debug.Log(TextResponse);
+            GenerateTalkBubble();
+            return scr_Stats.Interaction.TalkToHuman;
+        }
+
+        return scr_Stats.Interaction.None;
+
+    }
+
+    void GenerateTalkBubble()
+    {
+        Transform talkb;
+        if (TalkBubble != null)
+        {
+            talkb = Instantiate(TalkBubble);
+            talkb.position = transform.position + new Vector3(0, 2, 0);
+
+            TextMesh bubbleText =  talkb.GetComponentInChildren<TextMesh>();
+            if (bubbleText)
+            {
+                bubbleText.text = TextResponse;
+            }
+
+        }
+        else
+        {
+            Debug.LogWarning("no TalkBubblePrefab");
+        }
     }
 }
