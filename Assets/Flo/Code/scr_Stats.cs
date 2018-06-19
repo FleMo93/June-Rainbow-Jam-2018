@@ -11,6 +11,8 @@ public class scr_Stats : MonoBehaviour {
     public int ChopTreeStrength = 0;
     public int Health = 0;
     public float MoveSpeed = 0;
-    public string Name = "";
+    public string Name = "CoolNameBob";
+    public string Story = "Has an Interestring story to tell.";
+    public scr_PointOfInterest myCurrentPOI = null;
     public float RotationSpeed = 0;
 }

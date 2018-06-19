@@ -161,10 +161,17 @@ public class scr_Human_Motor : MonoBehaviour, i_Human_Motor
 
         foreach(Collider collider in colliders)
         {
-            i_Interactable interactable = collider.gameObject.GetComponent<i_Interactable>();
-            if(interactable != null)
+            i_Interactable[] interactables = collider.gameObject.GetComponents<i_Interactable>();
+            if(interactables != null)
             {
-                list.Add(new KeyValuePair<GameObject, i_Interactable>(collider.gameObject, interactable));
+                foreach (var inta in interactables)
+                {
+                    if (inta != null)
+                    {
+                        list.Add(new KeyValuePair<GameObject, i_Interactable>(collider.gameObject, inta));
+                    }
+                }
+                
             }
         }
 

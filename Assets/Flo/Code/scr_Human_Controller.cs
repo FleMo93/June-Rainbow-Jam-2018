@@ -16,6 +16,13 @@ public class scr_Human_Controller : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+
+        //mc: removed NullEx
+        if (input == null)
+        {
+            return;
+        }
+
         if(activeDirection != scr_Stats.Directions.None)
         {
             if ((activeDirection == scr_Stats.Directions.Up && !input.IsMovingUp()) ||
