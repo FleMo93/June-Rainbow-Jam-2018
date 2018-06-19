@@ -8,4 +8,5 @@ public interface i_Human_Motor {
     void MoveDown();
     void MoveLeft();
     void Interact();
+    Vector3 GetSize();
 }

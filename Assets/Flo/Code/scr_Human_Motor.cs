@@ -55,8 +55,7 @@ public class scr_Human_Motor : MonoBehaviour, i_Human_Motor
 
     void i_Human_Motor.Interact()
     {
-        if (pressedMoveDirection == scr_Stats.Directions.None &&
-            actualMoveDirection == scr_Stats.Directions.None)
+        if (actualMoveDirection == scr_Stats.Directions.None)
         {
             Interact();
         }
@@ -89,7 +88,6 @@ public class scr_Human_Motor : MonoBehaviour, i_Human_Motor
             else if(draggable != null && IsDragDirectionFree())
             {
                 actualMoveDirection = pressedMoveDirection;
-                //draggable.Move(pressedMoveDirection, stats.MoveSpeed);
             }
         }
 
@@ -215,5 +213,10 @@ public class scr_Human_Motor : MonoBehaviour, i_Human_Motor
             relativePlayerDirectionToBox = lookAtDirection;
             draggableGameObject.transform.SetParent(this.transform);
         }
+    }
+
+    public Vector3 GetSize()
+    {
+        return new Vector3(_PlayerWidth, _PlayerHeight, _PlayerWidth);
     }
 }

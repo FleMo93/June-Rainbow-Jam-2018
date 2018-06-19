@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class scr_Human_Controller : MonoBehaviour {
+public class scr_Player_Controller : MonoBehaviour {
 
     i_Player_Input input;
     i_Human_Motor motor;
@@ -59,12 +59,12 @@ public class scr_Human_Controller : MonoBehaviour {
             }
         }
 
-        if (activeDirection == scr_Stats.Directions.None)
-        {
             if (input.IsInteracting())
             {
                 motor.Interact();
             }
+        if (activeDirection == scr_Stats.Directions.None)
+        {
         }
         else
         {

@@ -55,10 +55,10 @@ GameObject:
   - component: {fileID: 114154357446121924}
   - component: {fileID: 65894349011696496}
   - component: {fileID: 114704825994268528}
-  - component: {fileID: 114987459276676980}
+  - component: {fileID: 114985715706618818}
   m_Layer: 0
   m_Name: Human
-  m_TagString: Untagged
+  m_TagString: Human
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -100,7 +100,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1557326921390034}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -7.5, y: 0, z: 0.5}
+  m_LocalPosition: {x: -3.5, y: 0, z: -1.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4662091060427308}
@@ -278,7 +278,7 @@ MonoBehaviour:
   _Model: {fileID: 1074994492507428}
   _MinRandomRotationTime: 1
   _MaxRandomRotationTime: 10
---- !u!114 &114987459276676980
+--- !u!114 &114985715706618818
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -286,6 +286,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 1557326921390034}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30ebe5707deb63b4f94ec22a2e020138, type: 3}
+  m_Script: {fileID: 11500000, guid: 4ed970817c595c245afb5f8daf4c2049, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _PathToEnd:
+  - {x: 3.5, y: 0, z: -6.5}
+  - {x: 7.5, y: 0, z: -9.5}
+  - {x: 18.5, y: 0, z: -6.5}
