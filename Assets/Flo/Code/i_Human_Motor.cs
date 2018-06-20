@@ -7,6 +7,6 @@ public interface i_Human_Motor {
     void MoveRight();
     void MoveDown();
     void MoveLeft();
-    void Interact();
+    scr_Stats.Interaction Interact();
     Vector3 GetSize();
 }

@@ -9,4 +9,11 @@ public interface i_Player_Input {
     bool IsMovingRight();
     bool IsMovingDown();
     bool IsMovingLeft();
+
+    bool IsSelectHumanUp();
+    bool IsSelectHumanRight();
+    bool IsSelectHumanDown();
+    bool IsSelectHumanLeft();
+    bool IsSelectHuman();
+    bool IsStopSelectHuman();
 }

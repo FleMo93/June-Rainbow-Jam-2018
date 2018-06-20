@@ -53,11 +53,15 @@ public class scr_Human_Motor : MonoBehaviour, i_Human_Motor
         pressedMoveDirection = scr_Stats.Directions.Left;
     }
 
-    void i_Human_Motor.Interact()
+    scr_Stats.Interaction i_Human_Motor.Interact()
     {
         if (actualMoveDirection == scr_Stats.Directions.None)
         {
-            Interact();
+            return Interact();
+        }
+        else
+        {
+            return scr_Stats.Interaction.None;
         }
     }
 
@@ -176,11 +180,18 @@ public class scr_Human_Motor : MonoBehaviour, i_Human_Motor
         return list.ToArray();
     }
 
-    private void Interact()
+    private scr_Stats.Interaction Interact()
     {
+        scr_Stats.Interaction? firstInteraction = null;
+
         foreach (KeyValuePair<GameObject, i_Interactable> interactable in GetInteractable())
         {
             scr_Stats.Interaction interaction = interactable.Value.Interact(this.gameObject);
+
+            if(!firstInteraction.HasValue)
+            {
+                firstInteraction = interaction;
+            }
 
             switch(interaction)
             {
@@ -195,6 +206,8 @@ public class scr_Human_Motor : MonoBehaviour, i_Human_Motor
                     break;
             }
         }
+
+        return firstInteraction.HasValue ? firstInteraction.Value : scr_Stats.Interaction.None;
     }
 
     private void Drag(i_Draggable drag, GameObject draggableGameObject)

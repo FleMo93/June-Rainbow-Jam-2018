@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class scr_Stats : MonoBehaviour {
-    public enum Interaction { None, ChangeSwitch, ChopTree, DraggableBox, TalkToHuman }
+    public enum Interaction { None, ChangeSwitch, ChopTree, DraggableBox, TalkToHuman, Altar }
     [HideInInspector]
     public enum Directions { Up, Right, Down, Left, None }
 
