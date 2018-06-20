@@ -92,7 +92,7 @@ public class scr_Tilemap : MonoBehaviour {
 
     public scr_Stats.Directions GetDirectionFromTo(Vector3 from, Vector3 to)
     {
-        Vector3 dir = (from - to).normalized;
+        Vector3 dir = (to - from).normalized;
         if(dir.x == 0 && dir.z == 0)
         {
             return scr_Stats.Directions.None;
@@ -135,6 +135,7 @@ public class scr_Tilemap : MonoBehaviour {
     }
 
     #region pathfinding
+    private List<FoundPath> foundPaths = new List<FoundPath>();
     private class PathfindingTile
     {
         public Vector3 Position { get; private set; }
@@ -144,26 +145,72 @@ public class scr_Tilemap : MonoBehaviour {
         public PathfindingTile(Vector3 tile, int estimatedCosts, PathfindingTile lastTile)
         {
             Position = tile;
-            EstimatedCosts = estimatedCosts;
             LastTile = lastTile;
+            EstimatedCosts = estimatedCosts + NumberOfTilesBefor();
+        }
+
+        public int NumberOfTilesBefor()
+        {
+            int counter = 0;
+
+            if(LastTile != null)
+            {
+                counter++;
+                counter += LastTile.NumberOfTilesBefor();
+            }
+
+            return counter;
         }
     }
 
-    public List<KeyValuePair<int, Vector3>> GetPath(Vector3 from, Vector3 to, Vector3 halfExtends)
+    private class FoundPath
     {
+        public Vector3 From { get; private set; }
+        public Vector3 To { get; private set; }
+        public Vector3 HalfExtends { get; private set; }
+        public Vector3[] Path { get; private set; }
+
+        public FoundPath(Vector3 from, Vector3 to, Vector3 haltExtends, Vector3[] path)
+        {
+            From = from;
+            To = to;
+            HalfExtends = haltExtends;
+            Path = path;
+        }
+    }
+
+    public ICollection<Vector3> GetPath(Vector3 from, Vector3 to, Vector3 halfExtends)
+    {
+        FoundPath fp = foundPaths.Where(x => x.From == from && x.To == to && x.HalfExtends == halfExtends).FirstOrDefault();
+
+        if(fp != null)
+        {
+            return fp.Path.ToList();
+        }
+
         List<PathfindingTile> closedList = new List<PathfindingTile>();
         List<PathfindingTile> openList = new List<PathfindingTile>();
 
 
         openList.Add(new PathfindingTile(from, EstimateCosts(from, to), null));
-        
 
+        int limit = 10000;
+        int limitCounter = 0;
 
-        while(openList.Where(x => x.EstimatedCosts == 0).Count() == 0)
+        while (openList.Where(x => x.Position == to).Count() == 0)
         {
             PathfindingTile tileToCheck = openList.OrderBy(x => x.EstimatedCosts).First();
-            openList.AddRange(GetNeighbors(tileToCheck, to, halfExtends));
+            PathfindingTile[] neigh = GetNeighbors(tileToCheck, to, halfExtends);
+            openList.AddRange(neigh.Where(o => closedList.Where(c => c.Position == o.Position).Count() == 0));
             openList.Remove(tileToCheck);
+            closedList.Add(tileToCheck);
+
+            limitCounter++;
+
+            if(limitCounter > limit)
+            {
+                break;
+            }
         }
 
         List<Vector3> points = new List<Vector3>();
@@ -172,7 +219,6 @@ public class scr_Tilemap : MonoBehaviour {
 
         while (!pathFound)
         {
-
             points.Add(nextTile.Position);
 
             if (nextTile.LastTile == null || nextTile.LastTile.Position == from)
@@ -193,11 +239,10 @@ public class scr_Tilemap : MonoBehaviour {
             counter++;
         }
 
-        return pointsWithOrder.OrderBy(x => x.Key).ToList();
+        List<Vector3> path = pointsWithOrder.OrderBy(x => x.Key).Select(x => x.Value).ToList();
+        foundPaths.Add(new FoundPath(from, to, halfExtends, path.ToArray()));
+        return path;
     }
-
-    
-
     
     private PathfindingTile[] GetNeighbors(PathfindingTile tile, Vector3 target, Vector3 halfExtends)
     {
