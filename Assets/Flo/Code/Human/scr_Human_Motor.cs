@@ -11,6 +11,8 @@ public class scr_Human_Motor : MonoBehaviour, i_Human_Motor
     private float _PlayerWidth = 1;
     [SerializeField]
     private GameObject _Model;
+    [SerializeField]
+    private Transform _PickupTransform;
 
     private scr_Stats.Directions actualMoveDirection = scr_Stats.Directions.None;
     private scr_Stats.Directions pressedMoveDirection = scr_Stats.Directions.None;
@@ -22,6 +24,10 @@ public class scr_Human_Motor : MonoBehaviour, i_Human_Motor
     private i_Draggable draggable = null;
     private GameObject draggableGameObject = null;
     private scr_Stats.Directions relativePlayerDirectionToBox = scr_Stats.Directions.None;
+
+    //intentory
+    private scr_Stats.ObjectType pickedupItemObjectType = scr_Stats.ObjectType.None;
+    private GameObject pickedUpItemObject = null;
 
     void Start ()
     {
@@ -183,28 +189,42 @@ public class scr_Human_Motor : MonoBehaviour, i_Human_Motor
     private scr_Stats.Interaction Interact()
     {
         scr_Stats.Interaction? firstInteraction = null;
+        KeyValuePair<GameObject, i_Interactable>[] interactables = GetInteractable();
 
-        foreach (KeyValuePair<GameObject, i_Interactable> interactable in GetInteractable())
+        foreach (KeyValuePair<GameObject, i_Interactable> interactable in interactables)
         {
-            scr_Stats.Interaction interaction = interactable.Value.Interact(this.gameObject);
+            scr_Interactable_Result result = interactable.Value.Interact(this.gameObject, pickedupItemObjectType);
+
+            if (!result.InteractionSuccessfull)
+            {
+                continue;
+            }
+
+            scr_Stats.Interaction interaction = result.Interaction;
 
             if(!firstInteraction.HasValue)
             {
                 firstInteraction = interaction;
             }
 
-            switch(interaction)
+            if(result.Dragable != null)
             {
-                case scr_Stats.Interaction.DraggableBox:
-                    i_Draggable drag = interactable.Key.GetComponent<i_Draggable>();
-
-                    if(drag != null)
-                    {
-                        Drag(drag, interactable.Key);
-                    }
-
-                    break;
+                Drag(result.Dragable, interactable.Key);
             }
+             
+            if(result.PickupObjectType != scr_Stats.ObjectType.None && this.pickedUpItemObject == null && pickedupItemObjectType == scr_Stats.ObjectType.None)
+            {
+                pickedUpItemObject = interactable.Key;
+                pickedupItemObjectType = result.PickupObjectType;
+
+                pickedUpItemObject.transform.position = _PickupTransform.transform.position;
+                pickedUpItemObject.transform.SetParent(_PickupTransform);
+            }
+        }
+
+        if(!firstInteraction.HasValue && pickedUpItemObject != null)
+        {
+            //TODO: get drop space and check if free
         }
 
         return firstInteraction.HasValue ? firstInteraction.Value : scr_Stats.Interaction.None;

@@ -12,8 +12,6 @@ public class scr_Player_Controller : MonoBehaviour {
     [SerializeField]
     private float _CameraSpeed = 15;
     [SerializeField]
-    private float _MaximalAlternativSelectionRange = 5;
-    [SerializeField]
     private float _OutlineWidthOnSelect = 0.1f;
 
 
@@ -121,6 +119,7 @@ public class scr_Player_Controller : MonoBehaviour {
 
         if (input.IsInteracting())
         {
+            //TODO: create and talk to animation controller
             if(motor.Interact() == scr_Stats.Interaction.Altar)
             {
                 SetState(States.HumanSelection);
@@ -177,7 +176,7 @@ public class scr_Player_Controller : MonoBehaviour {
         }
         else if(input.IsSelectHumanRight())
         {
-            newSelectedHuman = GetNextHuman(selectedHuman, scr_Stats.Directions.Right, scr_Stats.Directions.Up, scr_Stats.Directions.Left);
+            newSelectedHuman = GetNextHuman(selectedHuman, scr_Stats.Directions.Right, scr_Stats.Directions.Up, scr_Stats.Directions.Down);
         }
         else if(input.IsSelectHumanDown())
         {
@@ -253,7 +252,7 @@ public class scr_Player_Controller : MonoBehaviour {
                     rangeToTarget = range;
                 }
             }
-            else if (selectedHuman == null && (dir == firstAltDir || dir == secAltDir))
+            else if (target == null && (dir == firstAltDir || dir == secAltDir))
             {
                 if(range < alternativeRangeToTarget)
                 {

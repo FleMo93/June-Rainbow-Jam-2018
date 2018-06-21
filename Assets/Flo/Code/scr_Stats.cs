@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class scr_Stats : MonoBehaviour {
-    public enum Interaction { None, ChangeSwitch, ChopTree, DraggableBox, TalkToHuman, Altar }
+    public enum Interaction { None, ChangeSwitch, ChopTree, Drag, TalkToHuman, Altar, Pickup, DropPickup }
     [HideInInspector]
     public enum Directions { Up, Right, Down, Left, None }
+    public enum ObjectType { None, Axe }
 
     public Interaction InteractionType = Interaction.None;
     public int ChopTreeStrength = 0;

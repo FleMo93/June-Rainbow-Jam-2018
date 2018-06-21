@@ -36,13 +36,13 @@ public class scr_Human_AI : MonoBehaviour, i_Interactable
         _Model.transform.LookAt(_Model.transform.position + scr_Tilemap.Get.DirectionToVector(GetRandomDirection()));
     }
 
-    public scr_Stats.Interaction Interact(GameObject trigger)
+    public scr_Interactable_Result Interact(GameObject trigger, scr_Stats.ObjectType itemInInventory)
     {
-        rotateTowardsDirection = scr_Tilemap.Get.GetDirectionFromTo(trigger.transform.position, this.gameObject.transform.position);
+        rotateTowardsDirection = scr_Tilemap.Get.GetDirectionFromTo(this.gameObject.transform.position, trigger.transform.position);
         rotateTowardsVector = scr_Tilemap.Get.DirectionToVector(rotateTowardsDirection);
         timeToNextRandom = _MaxRandomRotationTime;
 
-        return scr_Stats.Interaction.TalkToHuman;
+        return new scr_Interactable_Result(scr_Stats.Interaction.TalkToHuman, true);
     }
 
     Vector3? nextPoint = null;

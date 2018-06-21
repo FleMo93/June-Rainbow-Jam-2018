@@ -12,9 +12,12 @@ public class scr_Dragable : MonoBehaviour, i_Interactable, i_Draggable {
     private Vector3 targetMoveTo;
     private float moveSpeed;
 
-    public scr_Stats.Interaction Interact(GameObject trigger)
+    public scr_Interactable_Result Interact(GameObject trigger, scr_Stats.ObjectType itemInInventory)
     {
-        return scr_Stats.Interaction.DraggableBox;
+        return new scr_Interactable_Result(
+            scr_Stats.Interaction.Drag, 
+            true,
+            draggable: this);
     }
 
     public bool MovementPossible(scr_Stats.Directions direction, scr_Stats.Directions relativePlayerDirectionToBox)

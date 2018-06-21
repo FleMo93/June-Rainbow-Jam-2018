@@ -98,6 +98,21 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!1 &1615969432168490
+GameObject:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4479895012853142}
+  m_Layer: 0
+  m_Name: PickupPosition
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!4 &4156288286999322
 Transform:
   m_ObjectHideFlags: 1
@@ -111,6 +126,19 @@ Transform:
   m_Father: {fileID: 4920005015933128}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &4479895012853142
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1615969432168490}
+  m_LocalRotation: {x: -0, y: -0.70710576, z: -0, w: 0.70710784}
+  m_LocalPosition: {x: 0.545, y: 1.068, z: -0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4920005015933128}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4623879439040522
 Transform:
   m_ObjectHideFlags: 1
@@ -118,7 +146,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1449205800965724}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.5, y: 0, z: 0.5}
+  m_LocalPosition: {x: -2.5, y: 0, z: 0.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4920005015933128}
@@ -164,6 +192,7 @@ Transform:
   m_Children:
   - {fileID: 4836436915610572}
   - {fileID: 4156288286999322}
+  - {fileID: 4479895012853142}
   m_Father: {fileID: 4623879439040522}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 90.00001, z: 0}
@@ -331,6 +360,7 @@ MonoBehaviour:
   _PlayerHeight: 2
   _PlayerWidth: 1
   _Model: {fileID: 1221701789044360}
+  _PickupTransform: {fileID: 4479895012853142}
 --- !u!114 &114827058552376460
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -342,8 +372,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30ebe5707deb63b4f94ec22a2e020138, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _State: 1
+  _State: 0
   _Camera: {fileID: 1341865870077766}
+  _CameraSpeed: 15
+  _OutlineWidthOnSelect: 0.1
 --- !u!114 &114981691035306230
 MonoBehaviour:
   m_ObjectHideFlags: 1

@@ -9,7 +9,7 @@ public class flo_scr_Switch : MonoBehaviour, i_Interactable {
     [SerializeField]
     private GameObject changeColorOn;
 
-    public scr_Stats.Interaction Interact(GameObject trigger)
+    public scr_Interactable_Result Interact(GameObject trigger, scr_Stats.ObjectType itemInInventory)
     {
         on = !on;
 
@@ -22,6 +22,6 @@ public class flo_scr_Switch : MonoBehaviour, i_Interactable {
             changeColorOn.GetComponent<Renderer>().material.color = Color.red;
         }
 
-        return scr_Stats.Interaction.ChangeSwitch;
+        return new scr_Interactable_Result(scr_Stats.Interaction.ChangeSwitch, true);
     }
 }
