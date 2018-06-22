@@ -113,18 +113,19 @@ public class scr_HumanTalk : MonoBehaviour, i_Interactable
         }
     }
 
-    public scr_Stats.Interaction Interact(GameObject trigger)
+    public scr_Interactable_Result Interact(GameObject trigger , scr_Stats.ObjectType itemInInventory)
     {
+        scr_Interactable_Result result = new scr_Interactable_Result(scr_Stats.Interaction.TalkToHuman, false);
+
         if (locInteractCDCounter >= locInteractCD)
         {
             locInteractCDCounter = 0;
             Debug.Log(TextResponse);
             GenerateTalkBubble();
-            return scr_Stats.Interaction.TalkToHuman;
+            //result.InteractionSuccessfull = true;
+            result = new scr_Interactable_Result(scr_Stats.Interaction.TalkToHuman, true);
         }
-
-        return scr_Stats.Interaction.None;
-
+        return result;
     }
 
     void GenerateTalkBubble()
@@ -147,4 +148,5 @@ public class scr_HumanTalk : MonoBehaviour, i_Interactable
             Debug.LogWarning("no TalkBubblePrefab");
         }
     }
+    
 }
