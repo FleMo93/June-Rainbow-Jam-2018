@@ -2,6 +2,9 @@
 
 https://itch.io/jam/june-rainbow-jam-2018
 
+##Pictures:
+https://github.com/FleMo93/June-Rainbow-Jam-2018/wiki/Pictures
+
 ##Aufgaben:
 
 #2.5D -> Modelle (keine Texturen, only Poligon):
