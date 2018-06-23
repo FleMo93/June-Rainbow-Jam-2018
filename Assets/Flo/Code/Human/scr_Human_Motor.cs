@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class scr_Human_Motor : MonoBehaviour, i_Human_Motor
 {
+    public enum MotorStates { Idle, Walk, Pickup, Attack, Cast }
+
     [SerializeField]
     private float _PlayerHeight = 2;
     [SerializeField]
@@ -14,13 +16,15 @@ public class scr_Human_Motor : MonoBehaviour, i_Human_Motor
     [SerializeField]
     private Transform _PickupTransform;
 
+    private scr_Stats stats;
+
+    //movement
     private scr_Stats.Directions actualMoveDirection = scr_Stats.Directions.None;
     private scr_Stats.Directions pressedMoveDirection = scr_Stats.Directions.None;
     private scr_Stats.Directions lookAtDirection = scr_Stats.Directions.None;
-
-    private scr_Stats stats;
-
     private Vector3 halfExtents;
+
+    //dragable
     private i_Draggable draggable = null;
     private GameObject draggableGameObject = null;
     private scr_Stats.Directions relativePlayerDirectionToBox = scr_Stats.Directions.None;
@@ -28,6 +32,8 @@ public class scr_Human_Motor : MonoBehaviour, i_Human_Motor
     //intentory
     private scr_Stats.ObjectType pickedupItemObjectType = scr_Stats.ObjectType.None;
     private GameObject pickedUpItemObject = null;
+
+    public MotorStates motorState = MotorStates.Idle;
 
     void Start ()
     {
@@ -103,7 +109,12 @@ public class scr_Human_Motor : MonoBehaviour, i_Human_Motor
 
         if (actualMoveDirection != scr_Stats.Directions.None)
         {
+            motorState = MotorStates.Walk;
             this.transform.position = Vector3.MoveTowards(this.transform.position, targetMoveTo, stats.MoveSpeed * Time.deltaTime);
+        }
+        else
+        {
+            motorState = MotorStates.Idle;
         }
 
         if(targetMoveTo == this.transform.position)
@@ -219,12 +230,23 @@ public class scr_Human_Motor : MonoBehaviour, i_Human_Motor
 
                 pickedUpItemObject.transform.position = _PickupTransform.transform.position;
                 pickedUpItemObject.transform.SetParent(_PickupTransform);
+                pickedUpItemObject.GetComponent<BoxCollider>().enabled = false;
+            }
+
+            if(result.Damagable != null)
+            {
+                result.Damagable.Damage(stats.ChopTreeStrength);
             }
         }
 
         if(!firstInteraction.HasValue && pickedUpItemObject != null)
         {
-            //TODO: get drop space and check if free
+            pickedUpItemObject.transform.SetParent(null);
+            pickedUpItemObject.transform.position = scr_Tilemap.Get.GetNextTile(lookAtDirection, this.transform.position);
+            pickedUpItemObject.transform.rotation = Quaternion.identity;
+            pickedUpItemObject.GetComponent<BoxCollider>().enabled = true;
+            pickedUpItemObject = null;
+            pickedupItemObjectType = scr_Stats.ObjectType.None;
         }
 
         return firstInteraction.HasValue ? firstInteraction.Value : scr_Stats.Interaction.None;
@@ -251,5 +273,10 @@ public class scr_Human_Motor : MonoBehaviour, i_Human_Motor
     public Vector3 GetSize()
     {
         return new Vector3(_PlayerWidth, _PlayerHeight, _PlayerWidth);
+    }
+
+    public MotorStates GetState()
+    {
+        return motorState;
     }
 }
