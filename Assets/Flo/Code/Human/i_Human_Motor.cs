@@ -9,5 +9,4 @@ public interface i_Human_Motor {
     void MoveLeft();
     scr_Stats.Interaction Interact();
     Vector3 GetSize();
-    scr_Human_Motor.MotorStates GetState();
 }

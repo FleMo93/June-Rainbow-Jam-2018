@@ -1,50 +1,117 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Linq;
 using UnityEngine;
 
-public class scr_Player_Animator : MonoBehaviour {
+public class scr_Player_Animator : MonoBehaviour, i_Human_Animator {
+    private enum Animations { Idle, Walk, Pickup, Attack }
 
     [SerializeField]
-    private Animator antr;
+    private Animations animationState = Animations.Idle;
+
     [SerializeField]
     private float _MinTimeToIdle2 = 2f;
     [SerializeField]
     private float _MaxTimeToIdle2 = 5f;
 
-    i_Human_Motor motor;
     private float timeToIdle2;
+    private Animator antr;
 
-	// Use this for initialization
-	void Start () {
-        motor = GetComponent<i_Human_Motor>();
-	}
-	
-	// Update is called once per frame
-	void Update () {
-        var state = motor.GetState();
 
-        if (state == scr_Human_Motor.MotorStates.Idle)
+    public event scr_Human_AnimatorEvents.PickedUpHandler OnPickup;
+
+    public event scr_Human_AnimatorEvents.OnAttackHandler OnAttack;
+
+    void Start () {
+        timeToIdle2 = Random.Range(_MinTimeToIdle2, _MaxTimeToIdle2);
+        antr = GetComponent<Animator>();
+
+        //Pickup
+        AnimationEvent ev = new AnimationEvent();
+        ev.functionName = "FirePickup";
+        ev.time = 0.4f;
+        AnimationClip cl = antr.runtimeAnimatorController.animationClips.Where(x => x.name == "pickup").First();
+        if (cl.events.Count() == 0) 
         {
-            timeToIdle2 -= Time.deltaTime;
-            if (timeToIdle2 <= 0)
-            {
-                antr.SetBool("Idle2", true);
-                timeToIdle2 = Random.Range(_MinTimeToIdle2, _MaxTimeToIdle2);
-            }
-            else
-            {
-                antr.SetBool("Idle2", false);
-            }
+            cl.AddEvent(ev);
         }
 
-		switch(motor.GetState())
+        //Attack
+        ev = new AnimationEvent();
+        ev.functionName = "FireAttack";
+        ev.time = 0.7f;
+        cl = antr.runtimeAnimatorController.animationClips.Where(x => x.name == "attack").First();
+        if (cl.events.Count() == 0)
         {
-            case scr_Human_Motor.MotorStates.Walk:
+            cl.AddEvent(ev);
+        }
+    }
+	
+	void Update () {
+        switch (animationState)
+        {
+            case Animations.Idle:
+                timeToIdle2 -= Time.deltaTime;
+                if (timeToIdle2 <= 0)
+                {
+                    antr.SetBool("Idle2", true);
+                    timeToIdle2 = Random.Range(_MinTimeToIdle2, _MaxTimeToIdle2);
+                }
+                else
+                {
+                    antr.SetBool("Idle2", false);
+                }
+
+                antr.SetBool("Walk", false);
+                antr.SetBool("Pickup", false);
+                antr.SetBool("Attack", false);
+                break;
+
+            case Animations.Attack:
+                antr.SetBool("Attack", true);
+                break;
+
+            case Animations.Walk:
                 antr.SetBool("Walk", true);
                 break;
-            case scr_Human_Motor.MotorStates.Idle:
-                antr.SetBool("Walk", false);
+
+            case Animations.Pickup:
+                antr.SetBool("Pickup", true);
                 break;
         }
 	}
+
+    public void Idle()
+    {
+        animationState = Animations.Idle;
+    }
+
+    public void Walk()
+    {
+        animationState = Animations.Walk;
+    }
+
+    public void Pickup()
+    {
+        animationState = Animations.Pickup;
+    }
+
+    public void Attack()
+    {
+        animationState = Animations.Attack;
+    }
+
+    public void FirePickup()
+    {
+        if(OnPickup != null)
+        {
+            OnPickup(this);
+        }
+    }
+
+    public void FireAttack()
+    {
+        if(OnAttack != null)
+        {
+            OnAttack(this);
+        }
+    }
 }

@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class scr_Human_Motor : MonoBehaviour, i_Human_Motor
 {
-    public enum MotorStates { Idle, Walk, Pickup, Attack, Cast }
-
     [SerializeField]
     private float _PlayerHeight = 2;
     [SerializeField]
@@ -17,28 +13,37 @@ public class scr_Human_Motor : MonoBehaviour, i_Human_Motor
     private Transform _PickupTransform;
 
     private scr_Stats stats;
+    private i_Human_Animator animator;
+    private bool waitForAnimationFinished = false;
 
     //movement
-    private scr_Stats.Directions actualMoveDirection = scr_Stats.Directions.None;
-    private scr_Stats.Directions pressedMoveDirection = scr_Stats.Directions.None;
-    private scr_Stats.Directions lookAtDirection = scr_Stats.Directions.None;
-    private Vector3 halfExtents;
+    private scr_Stats.Directions move_ActualMoveDirection = scr_Stats.Directions.None;
+    private scr_Stats.Directions move_PressedMoveDirection = scr_Stats.Directions.None;
+    private scr_Stats.Directions move_LookAtDirection = scr_Stats.Directions.None;
+    private Vector3 move_HalfExtents;
 
     //dragable
-    private i_Draggable draggable = null;
-    private GameObject draggableGameObject = null;
-    private scr_Stats.Directions relativePlayerDirectionToBox = scr_Stats.Directions.None;
+    private i_Draggable drag_Draggable = null;
+    private GameObject drag_DraggableGameObject = null;
+    private scr_Stats.Directions drag_RelativePlayerDirectionToDragable = scr_Stats.Directions.None;
 
     //intentory
-    private scr_Stats.ObjectType pickedupItemObjectType = scr_Stats.ObjectType.None;
-    private GameObject pickedUpItemObject = null;
+    private scr_Stats.ObjectType pickup_ObjectType = scr_Stats.ObjectType.None;
+    private GameObject pickup_Object = null;
+    private bool pickup_SomethingInHand = false;
 
-    public MotorStates motorState = MotorStates.Idle;
+    //attack
+    private i_Damageable damage_ObjectToDamage = null;
+    private int damage_DamageStrength = 0;
 
     void Start ()
     {
         stats = GetComponent<scr_Stats>();
-        halfExtents = new Vector3(
+        animator = GetComponentInChildren<i_Human_Animator>();
+        animator.OnPickup += Animator_OnPickup;
+        animator.OnAttack += Animator_OnAttack;
+
+        move_HalfExtents = new Vector3(
             _PlayerWidth / 2,
             _PlayerHeight / 2,
             _PlayerWidth / 2
@@ -47,27 +52,27 @@ public class scr_Human_Motor : MonoBehaviour, i_Human_Motor
 
     public void MoveUp()
     {
-        pressedMoveDirection = scr_Stats.Directions.Up;
+        move_PressedMoveDirection = scr_Stats.Directions.Up;
     }
 
     public void MoveRight()
     {
-        pressedMoveDirection = scr_Stats.Directions.Right;
+        move_PressedMoveDirection = scr_Stats.Directions.Right;
     }
 
     public void MoveDown()
     {
-        pressedMoveDirection = scr_Stats.Directions.Down;
+        move_PressedMoveDirection = scr_Stats.Directions.Down;
     }
 
     public void MoveLeft()
     {
-        pressedMoveDirection = scr_Stats.Directions.Left;
+        move_PressedMoveDirection = scr_Stats.Directions.Left;
     }
 
     scr_Stats.Interaction i_Human_Motor.Interact()
     {
-        if (actualMoveDirection == scr_Stats.Directions.None)
+        if (move_ActualMoveDirection == scr_Stats.Directions.None)
         {
             return Interact();
         }
@@ -79,72 +84,77 @@ public class scr_Human_Motor : MonoBehaviour, i_Human_Motor
 
     void Update ()
     {
+        if(waitForAnimationFinished)
+        {
+            return;
+        }
+
         Move();
-        pressedMoveDirection = scr_Stats.Directions.None;
+        move_PressedMoveDirection = scr_Stats.Directions.None;
         Rotate();
     }
 
     Vector3 targetMoveTo;
     private void Move()
     {
-        if (actualMoveDirection == scr_Stats.Directions.None && pressedMoveDirection != scr_Stats.Directions.None)
+        if (move_ActualMoveDirection == scr_Stats.Directions.None && move_PressedMoveDirection != scr_Stats.Directions.None)
         {
-            targetMoveTo = scr_Tilemap.Get.GetNextTile(pressedMoveDirection, this.transform.position);
+            targetMoveTo = scr_Tilemap.Get.GetNextTile(move_PressedMoveDirection, this.transform.position);
 
-            if (draggable == null)
+            if (drag_Draggable == null)
             {
-                lookAtDirection = pressedMoveDirection;
+                move_LookAtDirection = move_PressedMoveDirection;
             }
 
-            if(draggable == null && scr_Tilemap.Get.IsTileFree(targetMoveTo, halfExtents))
+            if(drag_Draggable == null && scr_Tilemap.Get.IsTileFree(targetMoveTo, move_HalfExtents))
             {
-                actualMoveDirection = pressedMoveDirection;
+                move_ActualMoveDirection = move_PressedMoveDirection;
                 
             }
-            else if(draggable != null && IsDragDirectionFree())
+            else if(drag_Draggable != null && IsDragDirectionFree())
             {
-                actualMoveDirection = pressedMoveDirection;
+                move_ActualMoveDirection = move_PressedMoveDirection;
             }
         }
 
-        if (actualMoveDirection != scr_Stats.Directions.None)
+        if (move_ActualMoveDirection != scr_Stats.Directions.None)
         {
-            motorState = MotorStates.Walk;
+            animator.Walk();
             this.transform.position = Vector3.MoveTowards(this.transform.position, targetMoveTo, stats.MoveSpeed * Time.deltaTime);
         }
         else
         {
-            motorState = MotorStates.Idle;
+            animator.Idle();
         }
 
         if(targetMoveTo == this.transform.position)
         {
-            actualMoveDirection = scr_Stats.Directions.None;
+            move_ActualMoveDirection = scr_Stats.Directions.None;
         }
     }
 
     private bool IsDragDirectionFree()
     {
-        Collider[] colliders = scr_Tilemap.Get.GetCollidersOnTile(targetMoveTo, halfExtents);
+        Collider[] colliders = scr_Tilemap.Get.GetCollidersOnTile(targetMoveTo, move_HalfExtents);
         bool playerCanMove = true;
 
         foreach(Collider collider in colliders)
         {
-            if(collider.gameObject != draggableGameObject)
+            if(collider.gameObject != drag_DraggableGameObject)
             {
                 playerCanMove = false;
                 break;
             }
         }
 
-        return draggable.MovementPossible(pressedMoveDirection, relativePlayerDirectionToBox) && playerCanMove;
+        return drag_Draggable.MovementPossible(move_PressedMoveDirection, drag_RelativePlayerDirectionToDragable) && playerCanMove;
     }
 
     private void Rotate()
     {
         Vector3 dir;
 
-        switch(lookAtDirection)
+        switch(move_LookAtDirection)
         {
             case scr_Stats.Directions.Up:
                 dir = Vector3.forward;
@@ -173,8 +183,8 @@ public class scr_Human_Motor : MonoBehaviour, i_Human_Motor
 
     private KeyValuePair<GameObject, i_Interactable>[] GetInteractable()
     {
-        Vector3 target = scr_Tilemap.Get.GetNextTile(lookAtDirection, this.transform.position);
-        Collider[] colliders = scr_Tilemap.Get.GetCollidersOnTile(target, halfExtents);
+        Vector3 target = scr_Tilemap.Get.GetNextTile(move_LookAtDirection, this.transform.position);
+        Collider[] colliders = scr_Tilemap.Get.GetCollidersOnTile(target, move_HalfExtents);
 
         List<KeyValuePair<GameObject, i_Interactable>> list = new List<KeyValuePair<GameObject, i_Interactable>>();
 
@@ -204,7 +214,7 @@ public class scr_Human_Motor : MonoBehaviour, i_Human_Motor
 
         foreach (KeyValuePair<GameObject, i_Interactable> interactable in interactables)
         {
-            scr_Interactable_Result result = interactable.Value.Interact(this.gameObject, pickedupItemObjectType);
+            scr_Interactable_Result result = interactable.Value.Interact(this.gameObject, pickup_ObjectType);
 
             if (!result.InteractionSuccessfull)
             {
@@ -223,49 +233,90 @@ public class scr_Human_Motor : MonoBehaviour, i_Human_Motor
                 Drag(result.Dragable, interactable.Key);
             }
              
-            if(result.PickupObjectType != scr_Stats.ObjectType.None && this.pickedUpItemObject == null && pickedupItemObjectType == scr_Stats.ObjectType.None)
+            if(result.PickupObjectType != scr_Stats.ObjectType.None && this.pickup_Object == null && pickup_ObjectType == scr_Stats.ObjectType.None)
             {
-                pickedUpItemObject = interactable.Key;
-                pickedupItemObjectType = result.PickupObjectType;
-
-                pickedUpItemObject.transform.position = _PickupTransform.transform.position;
-                pickedUpItemObject.transform.SetParent(_PickupTransform);
-                pickedUpItemObject.GetComponent<BoxCollider>().enabled = false;
+                pickup_Object = interactable.Key;
+                pickup_ObjectType = result.PickupObjectType;
+                pickup_SomethingInHand = true;
+                animator.Pickup();
+                waitForAnimationFinished = true;
             }
 
-            if(result.Damagable != null)
+            if (result.Damagable != null)
             {
-                result.Damagable.Damage(stats.ChopTreeStrength);
+                damage_ObjectToDamage = result.Damagable;
+                switch(interaction)
+                {
+                    case scr_Stats.Interaction.ChopTree:
+                        damage_DamageStrength = stats.ChopTreeStrength;
+                        break;
+                }
+
+                animator.Attack();
+                waitForAnimationFinished = true;
             }
         }
 
-        if(!firstInteraction.HasValue && pickedUpItemObject != null)
+        if(!firstInteraction.HasValue && pickup_Object != null)
         {
-            pickedUpItemObject.transform.SetParent(null);
-            pickedUpItemObject.transform.position = scr_Tilemap.Get.GetNextTile(lookAtDirection, this.transform.position);
-            pickedUpItemObject.transform.rotation = Quaternion.identity;
-            pickedUpItemObject.GetComponent<BoxCollider>().enabled = true;
-            pickedUpItemObject = null;
-            pickedupItemObjectType = scr_Stats.ObjectType.None;
+            Vector3 position = scr_Tilemap.Get.GetNextTile(move_LookAtDirection, this.transform.position);
+
+            if (scr_Tilemap.Get.IsTileFree(position, new Vector3(0.5f, 0.5f, 0.5f)))
+            {
+                pickup_SomethingInHand = false;
+                animator.Pickup();
+                waitForAnimationFinished = true;
+            }
         }
 
         return firstInteraction.HasValue ? firstInteraction.Value : scr_Stats.Interaction.None;
     }
 
-    private void Drag(i_Draggable drag, GameObject draggableGameObject)
+    private void Animator_OnPickup(object sender)
     {
-        if(draggable == drag)
+        if (pickup_SomethingInHand)
         {
-            draggableGameObject.transform.parent = null;
-            draggable = null;
-            draggableGameObject = null;
-            relativePlayerDirectionToBox = scr_Stats.Directions.None;
+            pickup_Object.transform.position = _PickupTransform.transform.position;
+            pickup_Object.transform.SetParent(_PickupTransform);
+            pickup_Object.GetComponent<BoxCollider>().enabled = false;
         }
         else
         {
-            draggable = drag;
-            this.draggableGameObject = draggableGameObject;
-            relativePlayerDirectionToBox = lookAtDirection;
+            pickup_Object.transform.SetParent(null);
+            pickup_Object.transform.position = scr_Tilemap.Get.GetNextTile(move_LookAtDirection, this.transform.position);
+            pickup_Object.transform.rotation = Quaternion.identity;
+            pickup_Object.GetComponent<BoxCollider>().enabled = true;
+            pickup_Object = null;
+            pickup_ObjectType = scr_Stats.ObjectType.None;
+        }
+
+        waitForAnimationFinished = false;
+        animator.Idle();
+    }
+
+    private void Animator_OnAttack(object sender)
+    {
+        damage_ObjectToDamage.Damage(damage_DamageStrength);
+
+        waitForAnimationFinished = false;
+        animator.Idle();
+
+    }
+
+    private void Drag(i_Draggable drag, GameObject draggableGameObject)
+    {
+        if(drag_Draggable == drag)
+        {
+            draggableGameObject.transform.parent = null;
+            drag_Draggable = null;
+            draggableGameObject = null;
+            drag_RelativePlayerDirectionToDragable = scr_Stats.Directions.None;
+        }
+        else
+        {
+            drag_Draggable = drag;
+            this.drag_DraggableGameObject = draggableGameObject;
+            drag_RelativePlayerDirectionToDragable = move_LookAtDirection;
             draggableGameObject.transform.SetParent(this.transform);
         }
     }
@@ -275,8 +326,4 @@ public class scr_Human_Motor : MonoBehaviour, i_Human_Motor
         return new Vector3(_PlayerWidth, _PlayerHeight, _PlayerWidth);
     }
 
-    public MotorStates GetState()
-    {
-        return motorState;
-    }
 }
