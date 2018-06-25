@@ -8,14 +8,16 @@ public interface i_Human_Animator
     void Walk();
     void Pickup();
     void Attack();
-
+    bool ReadyForInteraction();
 
     event scr_Human_AnimatorEvents.PickedUpHandler OnPickup;
     event scr_Human_AnimatorEvents.OnAttackHandler OnAttack;
+    event scr_Human_AnimatorEvents.OnAnimationFinished OnAnimationTransition;
 }
 
 public class scr_Human_AnimatorEvents
 {
     public delegate void PickedUpHandler(object sender);
     public delegate void OnAttackHandler(object sender);
+    public delegate void OnAnimationFinished(object sender);
 }

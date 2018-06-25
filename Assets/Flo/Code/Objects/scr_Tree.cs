@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class scr_Tree : MonoBehaviour, i_Interactable, i_Damageable {
     scr_Stats stats;
@@ -13,6 +10,12 @@ public class scr_Tree : MonoBehaviour, i_Interactable, i_Damageable {
     private GameObject _Stub;
     [SerializeField]
     private GameObject _FelledBody;
+    [SerializeField]
+    private float _FallSpeed = 25f;
+    [SerializeField]
+    private float _FallSpeedAcceleration = 1f;
+    [SerializeField]
+    private float _DisappearSpeed = 0.9f;
 
     void Start () {
         stats = gameObject.GetComponent<scr_Stats>();
@@ -29,7 +32,7 @@ public class scr_Tree : MonoBehaviour, i_Interactable, i_Damageable {
         {
             _Stub.SetActive(true);
             _FelledBody.SetActive(true);
-            _MainModel.SetActive(false);
+            _MainModel.SetActive(false); 
         }
     }
 
@@ -40,4 +43,39 @@ public class scr_Tree : MonoBehaviour, i_Interactable, i_Damageable {
         return new scr_Interactable_Result(scr_Stats.Interaction.ChopTree, successfull, damagable: this);
     }
 
+    float rotationDone = 0;
+    float fallSpeed = 0;
+    void Update()
+    {
+        if(fallSpeed == 0)
+        {
+            fallSpeed = _FallSpeed;
+        }
+
+        fallSpeed += _FallSpeedAcceleration * Time.deltaTime;
+
+        if(stats.Health <= 0)
+        {
+            if (rotationDone <= 90)
+            {
+                float rotation = fallSpeed * Time.deltaTime;
+                rotationDone += rotation;
+                _FelledBody.transform.Rotate(new Vector3(rotation, 0, 0));
+            }
+            else if(_FelledBody.transform.localScale.x > 0)
+            {
+                _FelledBody.transform.localScale = new Vector3(
+                    _FelledBody.transform.localScale.x - _DisappearSpeed * Time.deltaTime,
+                    _FelledBody.transform.localScale.y - _DisappearSpeed * Time.deltaTime,
+                    _FelledBody.transform.localScale.z - _DisappearSpeed * Time.deltaTime
+                    );
+
+                if(_FelledBody.transform.localScale.x <= 0) 
+                {
+                    _FelledBody.transform.localScale = Vector3.zero;
+                } 
+            }
+        }
+
+    }
 }

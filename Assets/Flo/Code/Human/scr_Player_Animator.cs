@@ -17,8 +17,8 @@ public class scr_Player_Animator : MonoBehaviour, i_Human_Animator {
 
 
     public event scr_Human_AnimatorEvents.PickedUpHandler OnPickup;
-
     public event scr_Human_AnimatorEvents.OnAttackHandler OnAttack;
+    public event scr_Human_AnimatorEvents.OnAnimationFinished OnAnimationTransition;
 
     void Start () {
         timeToIdle2 = Random.Range(_MinTimeToIdle2, _MaxTimeToIdle2);
@@ -29,6 +29,7 @@ public class scr_Player_Animator : MonoBehaviour, i_Human_Animator {
         ev.functionName = "FirePickup";
         ev.time = 0.4f;
         AnimationClip cl = antr.runtimeAnimatorController.animationClips.Where(x => x.name == "pickup").First();
+
         if (cl.events.Count() == 0) 
         {
             cl.AddEvent(ev);
@@ -39,13 +40,16 @@ public class scr_Player_Animator : MonoBehaviour, i_Human_Animator {
         ev.functionName = "FireAttack";
         ev.time = 0.7f;
         cl = antr.runtimeAnimatorController.animationClips.Where(x => x.name == "attack").First();
+         
         if (cl.events.Count() == 0)
         {
             cl.AddEvent(ev);
         }
     }
-	
-	void Update () {
+
+    bool transitionGoing = false;
+
+    void Update () {
         switch (animationState)
         {
             case Animations.Idle:
@@ -76,6 +80,21 @@ public class scr_Player_Animator : MonoBehaviour, i_Human_Animator {
             case Animations.Pickup:
                 antr.SetBool("Pickup", true);
                 break;
+        }
+
+        if (antr.IsInTransition(0) && antr.GetNextAnimatorClipInfo(0).First().clip.name == "idle")
+        {
+            transitionGoing = true;
+            animationState = Animations.Idle;
+            antr.SetBool("Idle2", false);
+            antr.SetBool("Pickup", false);
+            antr.SetBool("Attack", false);
+            antr.SetBool("Walk", false);
+        }
+        else if(transitionGoing && !antr.IsInTransition(0))
+        {
+            FireAnimationFinished();
+            transitionGoing = false;
         }
 	}
 
@@ -113,5 +132,19 @@ public class scr_Player_Animator : MonoBehaviour, i_Human_Animator {
         {
             OnAttack(this);
         }
+    }
+
+    public void FireAnimationFinished()
+    {
+        timeToIdle2 = Random.Range(_MinTimeToIdle2, _MaxTimeToIdle2);
+        if (OnAnimationTransition != null)
+        {
+            OnAnimationTransition(this);
+        }
+    }
+
+    public bool ReadyForInteraction()
+    {
+        return !antr.IsInTransition(0) || antr.IsInTransition(0) && antr.GetNextAnimatorClipInfo(0).First().clip.name.StartsWith("idle") ;
     }
 }

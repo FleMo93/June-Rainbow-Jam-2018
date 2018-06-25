@@ -42,6 +42,7 @@ public class scr_Human_Motor : MonoBehaviour, i_Human_Motor
         animator = GetComponentInChildren<i_Human_Animator>();
         animator.OnPickup += Animator_OnPickup;
         animator.OnAttack += Animator_OnAttack;
+        animator.OnAnimationTransition += Animator_OnAnimationFinished;
 
         move_HalfExtents = new Vector3(
             _PlayerWidth / 2,
@@ -72,7 +73,7 @@ public class scr_Human_Motor : MonoBehaviour, i_Human_Motor
 
     scr_Stats.Interaction i_Human_Motor.Interact()
     {
-        if (move_ActualMoveDirection == scr_Stats.Directions.None)
+        if (move_ActualMoveDirection == scr_Stats.Directions.None && animator.ReadyForInteraction()) 
         {
             return Interact();
         }
@@ -289,18 +290,17 @@ public class scr_Human_Motor : MonoBehaviour, i_Human_Motor
             pickup_Object = null;
             pickup_ObjectType = scr_Stats.ObjectType.None;
         }
-
-        waitForAnimationFinished = false;
-        animator.Idle();
     }
 
     private void Animator_OnAttack(object sender)
     {
         damage_ObjectToDamage.Damage(damage_DamageStrength);
 
-        waitForAnimationFinished = false;
-        animator.Idle();
+    }
 
+    private void Animator_OnAnimationFinished(object sender)
+    {
+        waitForAnimationFinished = false;
     }
 
     private void Drag(i_Draggable drag, GameObject draggableGameObject)

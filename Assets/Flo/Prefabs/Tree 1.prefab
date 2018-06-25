@@ -53,7 +53,6 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4180179585783562}
-  - component: {fileID: 95756221403473160}
   m_Layer: 0
   m_Name: Complete
   m_TagString: Untagged
@@ -71,7 +70,6 @@ GameObject:
   - component: {fileID: 4789280449428052}
   - component: {fileID: 114731234929111938}
   - component: {fileID: 114144228577484590}
-  - component: {fileID: 95497755379090088}
   - component: {fileID: 65774737819240288}
   m_Layer: 0
   m_Name: Tree 1
@@ -337,42 +335,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0.5, z: 0}
---- !u!95 &95497755379090088
-Animator:
-  serializedVersion: 3
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1883252973842956}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: eacb08cd746c02c4fbcda8c28e27d112, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
---- !u!95 &95756221403473160
-Animator:
-  serializedVersion: 3
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1515200014497978}
-  m_Enabled: 1
-  m_Avatar: {fileID: 9000000, guid: 8a12f1d991777584f90e191f50e029b7, type: 3}
-  m_Controller: {fileID: 0}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!114 &114144228577484590
 MonoBehaviour:
   m_ObjectHideFlags: 1
