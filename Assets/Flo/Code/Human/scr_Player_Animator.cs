@@ -143,8 +143,11 @@ public class scr_Player_Animator : MonoBehaviour, i_Human_Animator {
         }
     }
 
-    public bool ReadyForInteraction()
+    public bool ReadyForInteraction() 
     {
-        return !antr.IsInTransition(0) || antr.IsInTransition(0) && antr.GetNextAnimatorClipInfo(0).First().clip.name.StartsWith("idle") ;
+        return !antr.IsInTransition(0) && 
+            antr.GetCurrentAnimatorClipInfo(0).Count() == 1 && 
+            (antr.GetCurrentAnimatorClipInfo(0).First().clip.name == "idle" ||
+            antr.GetCurrentAnimatorClipInfo(0).First().clip.name == "idle_2");
     }
 }

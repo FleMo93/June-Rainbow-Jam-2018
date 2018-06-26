@@ -2,6 +2,7 @@
 
 public class scr_Tree : MonoBehaviour, i_Interactable, i_Damageable {
     scr_Stats stats;
+
     [SerializeField]
     private ParticleSystem _ParticleOnDamage;
     [SerializeField]
@@ -17,13 +18,15 @@ public class scr_Tree : MonoBehaviour, i_Interactable, i_Damageable {
     [SerializeField]
     private float _DisappearSpeed = 0.9f;
 
+    Vector3 fallDirection = Vector3.zero;
+
     void Start () {
         stats = gameObject.GetComponent<scr_Stats>();
         _Stub.SetActive(false);
         _FelledBody.SetActive(false);
 	}
 
-    public void Damage(int damage) 
+    public void Damage(int damage, GameObject sender) 
     {
         stats.Health -= damage;
         _ParticleOnDamage.Play();
@@ -32,7 +35,27 @@ public class scr_Tree : MonoBehaviour, i_Interactable, i_Damageable {
         {
             _Stub.SetActive(true);
             _FelledBody.SetActive(true);
-            _MainModel.SetActive(false); 
+            _MainModel.SetActive(false);
+
+            Debug.Log(scr_Tilemap.Get.GetDirectionFromTo(sender.transform.position, this.gameObject.transform.position));
+            switch(scr_Tilemap.Get.GetDirectionFromTo(sender.transform.position, this.gameObject.transform.position)) 
+            {
+                case scr_Stats.Directions.Up:
+                    fallDirection = transform.InverseTransformDirection(new Vector3(1, 0, 0));
+                    break;
+
+                case scr_Stats.Directions.Right:
+                    fallDirection = transform.InverseTransformDirection(new Vector3(0, 0, -1));
+                    break;
+
+                case scr_Stats.Directions.Down:
+                    fallDirection = transform.InverseTransformDirection(new Vector3(-1, 0, 0));
+                    break;
+
+                case scr_Stats.Directions.Left:
+                    fallDirection = transform.InverseTransformDirection(new Vector3(0, 0, 1));
+                    break;
+            }
         }
     }
 
@@ -60,7 +83,7 @@ public class scr_Tree : MonoBehaviour, i_Interactable, i_Damageable {
             {
                 float rotation = fallSpeed * Time.deltaTime;
                 rotationDone += rotation;
-                _FelledBody.transform.Rotate(new Vector3(rotation, 0, 0));
+                _FelledBody.transform.Rotate(fallDirection * rotation);
             }
             else if(_FelledBody.transform.localScale.x > 0)
             {

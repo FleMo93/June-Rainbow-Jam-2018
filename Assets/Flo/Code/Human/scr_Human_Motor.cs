@@ -294,7 +294,7 @@ public class scr_Human_Motor : MonoBehaviour, i_Human_Motor
 
     private void Animator_OnAttack(object sender)
     {
-        damage_ObjectToDamage.Damage(damage_DamageStrength);
+        damage_ObjectToDamage.Damage(damage_DamageStrength, this.gameObject);
 
     }
 
