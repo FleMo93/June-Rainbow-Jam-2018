@@ -8,6 +8,7 @@ public interface i_Human_Animator
     void Walk();
     void Pickup();
     void Attack();
+    void Cast();
     bool ReadyForInteraction();
 
     event scr_Human_AnimatorEvents.PickedUpHandler OnPickup;

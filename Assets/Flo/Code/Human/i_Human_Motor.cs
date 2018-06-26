@@ -9,4 +9,5 @@ public interface i_Human_Motor {
     void MoveLeft();
     scr_Stats.Interaction Interact();
     Vector3 GetSize();
+    void CastMode(bool on);
 }

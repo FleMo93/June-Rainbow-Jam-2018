@@ -21,6 +21,7 @@ public class scr_Player_Controller : MonoBehaviour {
     GameObject[] humans;
     Vector3 cameraOffset;
     bool cameraSwitchFinished = true;
+    bool castMode = false;
 
 	// Use this for initialization
 	void Start () {
@@ -51,11 +52,19 @@ public class scr_Player_Controller : MonoBehaviour {
                 if (cameraSwitchFinished)
                 {
                     FreeMovement();
+
+                    if(castMode)
+                    {
+                        motor.CastMode(false);
+                        castMode = false;
+                    }
                 }
                 break;
 
             case States.HumanSelection:
                 HumanSelection();
+                castMode = true;
+                motor.CastMode(true);
                 break;
         }
 
@@ -119,7 +128,6 @@ public class scr_Player_Controller : MonoBehaviour {
 
         if (input.IsInteracting())
         {
-            //TODO: create and talk to animation controller
             if(motor.Interact() == scr_Stats.Interaction.Altar)
             {
                 SetState(States.HumanSelection);

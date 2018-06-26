@@ -1081,10 +1081,6 @@ Prefab:
       propertyPath: m_Name
       value: Tree
       objectReference: {fileID: 0}
-    - target: {fileID: 4789280449428052, guid: 9702d5599a9226743906eecd9fbb0036, type: 2}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 9702d5599a9226743906eecd9fbb0036, type: 2}
   m_IsPrefabParent: 0

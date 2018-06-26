@@ -37,7 +37,6 @@ public class scr_Tree : MonoBehaviour, i_Interactable, i_Damageable {
             _FelledBody.SetActive(true);
             _MainModel.SetActive(false);
 
-            Debug.Log(scr_Tilemap.Get.GetDirectionFromTo(sender.transform.position, this.gameObject.transform.position));
             switch(scr_Tilemap.Get.GetDirectionFromTo(sender.transform.position, this.gameObject.transform.position)) 
             {
                 case scr_Stats.Directions.Up:

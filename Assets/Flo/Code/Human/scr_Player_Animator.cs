@@ -2,7 +2,7 @@
 using UnityEngine;
 
 public class scr_Player_Animator : MonoBehaviour, i_Human_Animator {
-    private enum Animations { Idle, Walk, Pickup, Attack }
+    private enum Animations { Idle, Walk, Pickup, Attack, Cast }
 
     [SerializeField]
     private Animations animationState = Animations.Idle;
@@ -67,6 +67,7 @@ public class scr_Player_Animator : MonoBehaviour, i_Human_Animator {
                 antr.SetBool("Walk", false);
                 antr.SetBool("Pickup", false);
                 antr.SetBool("Attack", false);
+                antr.SetBool("Cast", false);
                 break;
 
             case Animations.Attack:
@@ -80,6 +81,10 @@ public class scr_Player_Animator : MonoBehaviour, i_Human_Animator {
             case Animations.Pickup:
                 antr.SetBool("Pickup", true);
                 break;
+
+            case Animations.Cast:
+                antr.SetBool("Cast", true);
+                break;
         }
 
         if (antr.IsInTransition(0) && antr.GetNextAnimatorClipInfo(0).First().clip.name == "idle")
@@ -90,6 +95,7 @@ public class scr_Player_Animator : MonoBehaviour, i_Human_Animator {
             antr.SetBool("Pickup", false);
             antr.SetBool("Attack", false);
             antr.SetBool("Walk", false);
+            antr.SetBool("Cast", false);
         }
         else if(transitionGoing && !antr.IsInTransition(0))
         {
@@ -116,6 +122,11 @@ public class scr_Player_Animator : MonoBehaviour, i_Human_Animator {
     public void Attack()
     {
         animationState = Animations.Attack;
+    }
+
+    public void Cast()
+    {
+        animationState = Animations.Cast;
     }
 
     public void FirePickup()
@@ -148,6 +159,8 @@ public class scr_Player_Animator : MonoBehaviour, i_Human_Animator {
         return !antr.IsInTransition(0) && 
             antr.GetCurrentAnimatorClipInfo(0).Count() == 1 && 
             (antr.GetCurrentAnimatorClipInfo(0).First().clip.name == "idle" ||
-            antr.GetCurrentAnimatorClipInfo(0).First().clip.name == "idle_2");
+            antr.GetCurrentAnimatorClipInfo(0).First().clip.name == "idle_2"); 
     }
+
+    
 }

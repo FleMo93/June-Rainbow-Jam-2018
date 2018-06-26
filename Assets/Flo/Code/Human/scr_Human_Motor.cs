@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class scr_Human_Motor : MonoBehaviour, i_Human_Motor
@@ -326,4 +327,15 @@ public class scr_Human_Motor : MonoBehaviour, i_Human_Motor
         return new Vector3(_PlayerWidth, _PlayerHeight, _PlayerWidth);
     }
 
+    public void CastMode(bool on)
+    {
+        if(on)
+        {
+            animator.Cast();
+        }
+        else
+        {
+            animator.Idle();
+        }
+    }
 }
